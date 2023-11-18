@@ -1,0 +1,231 @@
+commande run 
+aws ssm send-command --document-name "AWS-ApplyAnsiblePlaybooks" --document-version "1" --targets '[{"Key":"InstanceIds","Values":["i-0805dfabf65ae3a27"]}]' --parameters '{"SourceType":["GitHub"],"SourceInfo":["{}"],"InstallDependencies":["True"],"PlaybookFile":["hello-world-playbook.yml"],"ExtraVariables":["SSM=True"],"Check":["False"],"Verbose":["-v"],"TimeoutSeconds":["3600"]}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --region us-west-2
+
+Configurations et autorisations vérifiées
+Exécuter des tâches sur plusieurs serveurs
+Paramètres ou configurations d'application mis à jour
+Accès à la ligne de commande sur une instance
+
+
+Utilisation d'AWS Systems Manager
+Aperçu du laboratoire
+AWS Systems Manager est un ensemble de fonctionnalités que vous pouvez utiliser pour centraliser les données opérationnelles et automatiser les tâches sur vos ressources Amazon Web Services (AWS). Systems Manager peut configurer et gérer des instances Amazon Elastic Compute Cloud (Amazon EC2), des serveurs sur site, des machines virtuelles et d'autres ressources AWS à grande échelle.
+
+Objectifs
+Après avoir terminé cet atelier, vous devriez pouvoir utiliser Systems Manager pour effectuer les opérations suivantes :
+
+Vérifiez les configurations et les autorisations.
+Exécutez des tâches sur plusieurs serveurs.
+Mettez à jour les paramètres ou les configurations de l’application.
+Accédez à la ligne de commande sur une instance.
+Durée
+Cette activité nécessite environ 30 minutes .
+
+Accès à la console de gestion AWS
+En haut de ces instructions, choisissez Démarrer le laboratoire pour lancer le laboratoire.
+
+Attendez que le message « État du laboratoire : prêt » apparaisse, puis choisissez X pour fermer le panneau Démarrer le laboratoire .
+
+À côté de Start Lab , choisissez AWS pour ouvrir AWS Management Console dans un nouvel onglet de navigateur. Le système vous connecte automatiquement.
+
+Astuce Si un nouvel onglet du navigateur ne s'ouvre pas, une bannière ou une icône en haut de votre navigateur indiquera que votre navigateur empêche le site d'ouvrir des fenêtres contextuelles. Choisissez la bannière ou l'icône, puis choisissez Autoriser les fenêtres contextuelles .
+
+Organisez la AWS Management Console de manière à ce qu'elle apparaisse à côté de ces instructions.
+
+Ne modifiez pas la région sauf si vous y êtes invité.
+
+Tâche 1 : Générer des listes d'inventaire pour les instances gérées
+Vous pouvez utiliser Fleet Manager, une fonctionnalité de Systems Manager, pour collecter des informations sur le système d'exploitation, des informations sur les applications et des métadonnées à partir d'instances EC2, de serveurs sur site ou de machines virtuelles dans un environnement hybride. Vous pouvez également utiliser Fleet Manager pour interroger les métadonnées afin de comprendre rapidement quelles instances exécutent le logiciel et les configurations requises par votre stratégie logicielle et quelles instances vous devez mettre à jour.
+
+Dans cette tâche, vous utilisez Fleet Manager pour collecter l'inventaire à partir d'une instance EC2.
+
+Dans AWS Management Console, dans ledans la zone de recherche, entrez Systems Manageret appuyez sur Entrée. Cette option vous amène à la page de la console Systems Manager.
+
+Dans le volet de navigation de gauche, pour Node Management , choisissez Fleet Manager .
+
+Choisissez la liste déroulante Gestion des comptes , puis choisissez Configurer l'inventaire .
+
+Pour créer une association qui collecte des informations sur les logiciels et les paramètres de votre instance gérée, choisissez les options suivantes :
+
+Dans la section Fournir les détails de l'inventaire , pour Nom , saisissezInventory-Association
+
+Dans la section Cibles , choisissez les options suivantes :
+
+Pour Spécifier les cibles par , choisissez Sélection manuelle des instances .
+Sélectionnez la ligne pour Instance gérée .
+Laissez les autres options comme paramètres par défaut.
+
+Choisissez Configurer l'inventaire
+
+Une bannière avec le message « Configuration de la demande d'inventaire réussie » apparaît sur la page Fleet Manager. L'inventaire, une fonctionnalité de Systems Manager, inventorie désormais régulièrement l'instance pour les propriétés sélectionnées.
+
+Choisissez le lien Node ID , qui vous dirige vers la présentation du nœud .
+
+Choisissez l' onglet Inventaire .
+
+Cet onglet répertorie toutes les applications de l'instance. Prenez un moment pour examiner les applications installées et les autres options dans la liste déroulante Type d'inventaire .
+
+Vous avez créé avec succès une association d'inventaire Systems Manager pour votre instance. Grâce à Inventory, vous pouvez examiner et valider les configurations logicielles sur vos instances sans avoir besoin de vous connecter à chaque instance à l'aide de SSH.
+
+Tâche 2 : Installer une application personnalisée à l'aide de Run Command
+Dans cette tâche, vous installez une application Web personnalisée ( Widget Manufacturing Dashboard ) à l'aide de Run Command, une fonctionnalité de Systems Manager.
+
+Un cloud privé virtuel (VPC) avec une instance EC2 à l'intérieur.  Un utilisateur en dehors du cloud AWS utilise Run Command pour installer une application Web de fabrication de widgets.
+
+Dans le diagramme précédent, Systems Manager installe une application sur une instance EC2 dans un cloud privé virtuel (VPC). Il est installé à l’aide de Run Command. Run Command exécutera le « script d'installation » et installera les éléments suivants : le serveur Web Apache, PHP, le SDK AWS et l'application Web. Une fois que tout est installé, il démarre également le serveur Web.
+
+Dans le coin supérieur gauche, développez l'icône du menu. Pour Node Management , choisissez Run Command .
+
+Choisissez la commande Exécuter
+
+Une liste apparaît de documents préconfigurés pour exécuter des commandes courantes.
+
+Choisissez l'icône de recherchedans la zone et une liste déroulante apparaît. Choisissez les options suivantes :
+
+Propriétaire
+Appartenant à moi
+Un document apparaît.
+
+Remarque : N'entrez pas Propriétaire ou Appartenant à moi . La saisie de ce texte ne renvoie aucun résultat.
+
+Si le document n'est pas déjà sélectionné, sélectionnez le bouton correspondant au document.
+
+Les informations suivantes apparaissent pour ce document :
+
+Description Installer l'application Tableau de bord 
+Version du document : 1 (par défaut)  
+Laissez l' option Version du document définie sur cette valeur par défaut.
+
+Pour Sélection de la cible , sélectionnez Choisir les instances manuellement .
+
+Dans la section Instances , sélectionnez Instance gérée .
+
+L'agent Systems Manager est installé sur l' instance gérée . L'agent a enregistré l'instance auprès du service, ce qui lui permet d'être sélectionnée pour Exécuter la commande.
+
+Il est également possible d'identifier les instances cibles à l'aide de balises. En utilisant des balises, vous pouvez exécuter une seule commande sur toute une flotte d’instances correspondantes.
+
+Dans la section Options de sortie , décochez Activer un compartiment S3 .
+
+Développez la section Commandes de l'interface de ligne de commande AWS .
+
+Cette section affiche la commande de l'interface de ligne de commande (CLI) qui lance Run Command. Vous pouvez copier cette commande et l'utiliser ultérieurement dans un script plutôt que d'avoir à utiliser AWS Management Console.
+
+Choisissez Exécuter
+
+Une bannière avec l' ID de commande indique qu'elle a été envoyée avec succès sur la page ID de commande.
+
+Après 1 à 2 minutes, l' état global devrait passer à Succès . Si ce n'est pas le cas, choisissez leicône d'actualisation pour mettre à jour l'état.
+
+Vous validez maintenant l'application personnalisée qui a été installée.
+
+Dans la console Vocareum, choisissez les options suivantes :
+
+Choisissez la liste déroulante Détails en haut de ces instructions.
+Choisissez Afficher
+Copiez la valeur ServerIP . (Cette valeur est l'adresse IP publique.)
+Ouvrez un nouvel onglet de navigateur Web, collez l'adresse IP que vous avez copiée et appuyez sur Entrée.
+
+Le tableau de bord Widget Manufacturing que vous avez installé apparaît.
+
+Vous avez utilisé avec succès Run Command via Systems Manager pour installer une application personnalisée sur votre instance sans avoir besoin d'accéder à distance à l'instance à l'aide de SSH.
+
+Tâche 3 : Utiliser Parameter Store pour gérer les paramètres de l'application
+Parameter Store, une fonctionnalité de Systems Manager, fournit un stockage sécurisé et hiérarchique pour la gestion des données de configuration et la gestion des secrets. Vous pouvez stocker des données telles que des mots de passe, des chaînes de base de données et des codes de licence en tant que valeurs de paramètres. Vous pouvez stocker des valeurs sous forme de texte brut ou de données cryptées. Vous pouvez ensuite référencer des valeurs en utilisant le nom unique que vous avez spécifié lors de la création du paramètre.
+
+Dans cette tâche, vous utilisez Parameter Store pour stocker un paramètre que vous utilisez pour activer une fonctionnalité dans une application.
+
+Gardez l' onglet du navigateur Widget Manufacturing Dashboard ouvert et revenez à l' onglet AWS Systems Manager .
+
+Dans le volet de navigation de gauche, pour Application Management , choisissez Parameter Store .
+
+Choisissez Créer un paramètre
+
+Choisissez les options suivantes :
+
+Pour Nom : , saisissez/dashboard/show-beta-features
+Pour Description : , saisissezDisplay beta features
+Pour Niveau : , laissez l’option par défaut.
+Pour Type : , laissez l’option par défaut.
+Pour Valeur : , saisissezTrue
+Choisissez Créer un paramètre
+
+Une bannière avec le message « Création de la demande de paramètre réussie » apparaît en haut de la page.
+
+Le paramètre peut être spécifié sous la forme d'un chemin hiérarchique, tel que /dashboard/<option > .
+
+L'application qui s'exécute sur Amazon EC2 vérifie automatiquement ce paramètre. S'il trouve ce paramètre existant, des fonctionnalités supplémentaires sont affichées.
+
+Revenez à l'onglet du navigateur Web qui affiche l'application et actualisez la page Web.
+
+Si vous avez accidentellement fermé cet onglet de navigateur, choisissez la liste déroulante Détails en haut de ces instructions, choisissez Afficher , puis copiez et collez la valeur ServerIP dans un nouvel onglet du navigateur.
+
+Notez que trois graphiques sont affichés. L'application vérifie maintenant Parameter Store pour déterminer si le graphique supplémentaire (qui est encore en version bêta) doit être affiché. Il est courant de configurer des applications pour afficher des « fonctionnalités sombres » installées mais pas encore activées.
+
+Facultatif : supprimez le paramètre, puis actualisez l'onglet du navigateur avec l'application. Le troisième graphique disparaît à nouveau.
+
+Tâche 4 : Utiliser Session Manager pour accéder aux instances
+Avec Session Manager, une fonctionnalité de Systems Manager, vous pouvez gérer vos instances EC2 via un shell interactif basé sur un navigateur en une étape ou via l'interface de ligne de commande AWS (AWS CLI). Session Manager fournit une gestion d'instance sécurisée et vérifiable sans avoir besoin d'ouvrir des ports entrants, de gérer des hôtes bastions ou de gérer des clés SSH. Vous pouvez également utiliser Session Manager pour vous conformer aux politiques d'entreprise qui nécessitent un accès contrôlé aux instances, des pratiques de sécurité strictes et des journaux entièrement vérifiables avec les détails d'accès aux instances tout en fournissant aux utilisateurs finaux un accès multiplateforme en une seule étape à vos instances EC2.
+
+Lorsque vous utilisez Session Manager avec Microsoft Windows, Session Manager donne accès à une console PowerShell sur l'instance.
+
+Un VPC avec une instance EC2 à l'intérieur.  Un utilisateur en dehors du cloud AWS utilise Systems Manager et Session Manager pour accéder à l'instance EC2.
+
+Dans le diagramme précédent, Systems Manager utilise Session Manager pour accéder à l'instance EC2 sans avoir à se connecter à l'instance à l'aide de SSH. Session Manager est l'un des moyens sécurisés d'accéder à l'instance.
+
+Dans cette tâche, vous accédez à l'instance EC2 via Session Manager.
+
+Dans le volet de navigation de gauche, pour Node Management , choisissez Session Manager .
+
+Choisissez Démarrer la session
+
+Sélectionnez Instance gérée .
+
+Choisissez Démarrer la session
+
+Un nouvel onglet de session s'ouvre dans votre navigateur.
+
+Pour activer le curseur, choisissez n'importe où dans la fenêtre de session.
+
+Exécutez la commande suivante dans la fenêtre de session :
+
+ls /var/www/html
+La sortie répertorie les fichiers d'application installés sur l'instance.
+
+Exécutez la commande suivante dans la fenêtre de session :
+
+# Obtenir la région
+AZ = `curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone`
+exporter  AWS_DEFAULT_REGION = ${AZ::-1}
+
+# Répertorier les informations sur les instances EC2
+aws ec2 décrire-instances
+La sortie répertorie les détails de l'instance EC2 pour l' instance gérée au format JSON.
+
+Cette tâche montre comment utiliser Session Manager pour vous connecter à une instance sans utiliser SSH. Vous pouvez également vérifier cette fonctionnalité en confirmant que le port SSH est fermé pour le groupe de sécurité de l'instance.
+
+Vous pouvez restreindre l'accès à Session Manager via les stratégies AWS Identity and Access Management (IAM) et AWS CloudTrail enregistre l'utilisation de Session Manager. Ces options offrent une meilleure sécurité et un meilleur audit que l'accès SSH traditionnel.
+
+Conclusion
+Toutes nos félicitations! Vous avez maintenant effectué avec succès les opérations suivantes :
+
+Configurations et autorisations vérifiées
+Exécuter des tâches sur plusieurs serveurs
+Paramètres ou configurations d'application mis à jour
+Accès à la ligne de commande sur une instance
+Laboratoire terminé
+En haut de cette page, choisissez Fin du laboratoire , puis choisissez Oui pour confirmer que vous souhaitez mettre fin au laboratoire.  
+
+Un panneau apparaît indiquant que « Vous pouvez fermer cette boîte de message maintenant. Les ressources de laboratoire sont en cours de fin. »
+
+Pour fermer le panneau End Lab , choisissez le X dans le coin supérieur droit.
+
+Ressources additionnelles
+Qu'est-ce qu'AWS Systems Manager ?
+Gestionnaire de sessions AWS Systems Manager
+Pour plus d'informations sur AWS Training and Certification, consultez AWS Training and Certification .
+
+Vos commentaires sont les bienvenus et appréciés.
+
+Si vous souhaitez partager des suggestions ou des corrections, veuillez fournir les détails dans notre formulaire de contact AWS Training and Certification .
+
+© 2023, Amazon Web Services, Inc. ou ses filiales. Tous droits réservés. Ce travail ne peut pas être reproduit ou redistribué, en tout ou en partie, sans l'autorisation écrite préalable d'Amazon Web Services, Inc. La copie, le prêt ou la vente commerciale sont interdits.
